@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import classes from "./Comments.module.css";
 import NewCommentForm from "./NewCommentForm";
 import CommentList from "./CommentsList";
 
 const Comments = (props) => {
+	const params = useParams();
     const [isAddingComment, setIsAddingComment] = useState(false);
     const [listComment, setListComment] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +28,7 @@ const Comments = (props) => {
             if (data) {
                 setListComment(
                     Object.values(data).filter(
-                        (cmt) => cmt.quoteID === props.quoteID
+                        (cmt) => cmt.quoteID === params.quoteID
                     )
                 );
             } else {
@@ -40,7 +42,7 @@ const Comments = (props) => {
         } catch (err) {
             setHasError(err);
         }
-    }, [props.quoteID]);
+    }, [params.quoteID]);
 
     const startAddCommentHandler = () => {
         setIsAddingComment(true);
@@ -67,7 +69,7 @@ const Comments = (props) => {
                 {isAddingComment && (
                     <NewCommentForm
                         onAddComment={addCommentHandler}
-                        quoteID={props.quoteID}
+                        quoteID={params.quoteID}
                     />
                 )}
                 {listComment.length === 0 ? (

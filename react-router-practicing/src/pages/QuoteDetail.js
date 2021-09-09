@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Route, Link, useParams, useRouteMatch } from "react-router-dom";
 
 import HighlightedQuote from "../components/quotes/HighlightedQuote";
 import Comments from "../components/comments/Comments";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
 
 const QuoteDetail = () => {
+	const match = useRouteMatch();
     const params = useParams();
 
-    const [quote, setQuote] = useState({text: "", author: ""});
+    const [quote, setQuote] = useState({ text: "", author: "" });
     const [isQuoteLoading, setIsQuoteLoading] = useState(false);
     const [hasError, setHasError] = useState(null);
 
@@ -26,7 +27,15 @@ const QuoteDetail = () => {
 
             const data = await response.json();
 
-			setQuote(Object.values(data).filter((q) => q.id === params.quoteID)[0]);
+            const filterQuote = Object.values(data).find(
+                (q) => q.id === params.quoteID
+            );
+
+            if (!filterQuote) {
+                setHasError(new Error("Quote not found!"));
+            } else {
+                setQuote(filterQuote);
+            }
         };
 
         try {
@@ -43,10 +52,26 @@ const QuoteDetail = () => {
             {!hasError && isQuoteLoading && <LoadingSpinner />}
 
             {!hasError && !isQuoteLoading && (
-                <HighlightedQuote text={quote.text} author={quote.author}/>
+                <div>
+                    <HighlightedQuote text={quote.text} author={quote.author} />
+                    <Route path={match.url} exact>
+                        <div className="centered">
+                            <Link
+                                className="btn--flat"
+                                to={`${match.url}/comments`}
+                            >
+                                Show comment
+                            </Link>
+                        </div>
+                    </Route>
+                </div>
             )}
 
-			{!hasError && <Comments quoteID={params.quoteID}/>}
+            {!hasError && (
+                <Route path={`${match.path}/comments`}>
+                    <Comments />
+                </Route>
+            )}
         </React.Fragment>
     );
 };

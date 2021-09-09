@@ -4,6 +4,7 @@ import Layout from "./components/layout/Layout";
 import AllQuotes from "./pages/AllQuotes";
 import QuoteDetail from "./pages/QuoteDetail";
 import AddQuote from "./pages/AddQuote";
+import NotFound from "./pages/NotFound";
 
 function App() {
     return (
@@ -11,18 +12,21 @@ function App() {
             <main>
                 <Switch>
                     <Route path="/" exact>
-                        <Redirect to="/quotes" />
+                        <Redirect to="/quote" />
                     </Route>
-                    <Route path="/quotes" exact>
-						<AllQuotes />
-					</Route>
-					<Route path="/quotes/:quoteID" exact>
-						<QuoteDetail />
-					</Route>
+                    <Route path="/quote" exact>
+                        <AllQuotes />
+                    </Route>
+                    <Route path="/quote/:quoteID">
+                        <QuoteDetail />
+                    </Route>
 
-					<Route path="/new-quote" exact>
-						<AddQuote />
-					</Route>
+                    <Route path="/new-quote" exact>
+                        <AddQuote />
+                    </Route>
+                    <Route path="*">
+                        <NotFound />
+                    </Route>
                 </Switch>
             </main>
         </Layout>
